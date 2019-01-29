@@ -237,25 +237,22 @@ bool DDesktopServices::trash(const QList<QUrl> urls)
 
 bool DDesktopServices::playSystemSoundEffect(const DDesktopServices::SystemSoundEffect &effect)
 {
-    return playSystemSoundEffect(SOUND_EFFECT_LIST.at(static_cast<int>(effect)));
+    return playSystemSoundEffect(effect, false);
 }
 
 bool DDesktopServices::playSystemSoundEffect(const QString &name)
 {
-    if (!systemSoundEffectEnabled(name)) {
+    return playSystemSoundEffect(static_cast<DDesktopServices::SystemSoundEffect>(SOUND_EFFECT_LIST.indexOf(name)), false);
+}
+
+bool DDesktopServices::playSystemSoundEffect(const DDesktopServices::SystemSoundEffect &effect, bool forcePlay)
+{
+    const QString name = SOUND_EFFECT_LIST.at(static_cast<int>(effect));
+
+    if (!forcePlay && !systemSoundEffectEnabled(name)) {
         return false;
     }
 
-    return previewSystemSoundEffect(name);
-}
-
-bool DDesktopServices::previewSystemSoundEffect(const DDesktopServices::SystemSoundEffect &effect)
-{
-    return previewSystemSoundEffect(SOUND_EFFECT_LIST.at(static_cast<int>(effect)));
-}
-
-bool DDesktopServices::previewSystemSoundEffect(const QString &name)
-{
     const QString path = soundEffectFilePath(name);
 
     if (path.isEmpty()) {
@@ -271,11 +268,6 @@ bool DDesktopServices::previewSystemSoundEffect(const QString &name)
     }
 
     return true;
-}
-
-QString DDesktopServices::getNameByEffectType(const DDesktopServices::SystemSoundEffect &effect)
-{
-    return SOUND_EFFECT_LIST.at(static_cast<int>(effect));
 }
 
 QString DDesktopServices::errorMessage()
